@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OK-ArBwar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Syne for edgy, modern headers; Plus Jakarta Sans for clean, elegant body text -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <!-- Soft, glowing background -->
+  <div id="bg"></div>
+
+  <!-- Page Loader -->
+  <div id="loader" aria-live="polite" aria-label="Loading">
+    <div class="loader-card">
+      <div class="loader-text font-display">Serving sweetness</div>
+      <div class="loader-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- 1. Sleek Cherry Illustration (No black lines) -->
+  <svg class="sticker cherry" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 20 Q 40 50, 30 60" fill="none" stroke="#2D0010" stroke-width="3" stroke-linecap="round"/>
+    <path d="M50 20 Q 60 50, 70 60" fill="none" stroke="#2D0010" stroke-width="3" stroke-linecap="round"/>
+    <path d="M35 25 Q 50 15, 65 25 Z" fill="#FFB3D1" />
+    <circle cx="30" cy="70" r="18" fill="#FF0055" />
+    <circle cx="70" cy="70" r="18" fill="#FF0055" />
+    <path d="M22 65 Q 28 60, 32 65" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <path d="M62 65 Q 68 60, 72 65" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+
+  <!-- 2. Chic Cake Slice Illustration -->
+  <svg class="sticker cake" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 70 L 80 70 L 80 40 L 20 60 Z" fill="#FFF0F5" />
+    <path d="M15 70 L 85 70 L 85 75 L 15 75 Z" fill="#FFB3D1" rx="2" />
+    <line x1="25" y1="65" x2="75" y2="55" stroke="#FF0055" stroke-width="6" stroke-linecap="round"/>
+    <path d="M18 55 Q 30 68, 50 50 Q 70 48, 82 35 L 20 45 Z" fill="#FF0055" />
+    <circle cx="35" cy="48" r="2" fill="#FFFFFF"/>
+    <circle cx="55" cy="42" r="2" fill="#FFFFFF"/>
+    <circle cx="68" cy="38" r="2" fill="#FFFFFF"/>
+  </svg>
+
+  <!-- 3. Elegant Strawberry Illustration -->
+  <svg class="sticker strawberry" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 35 Q 20 60, 50 90 Q 80 60, 75 35 Q 70 15, 50 20 Q 30 15, 25 35 Z" fill="#FF0055" />
+    <path d="M30 25 Q 40 10, 50 20 Q 60 10, 70 25 Q 50 35, 30 25 Z" fill="#FFB3D1" />
+    <circle cx="40" cy="45" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="60" cy="45" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="50" cy="60" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="35" cy="65" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="65" cy="65" r="2" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="50" cy="75" r="2" fill="#FFFFFF" opacity="0.8"/>
+  </svg>
+
+  <!-- 4. Soft Macaron Illustration -->
+  <svg class="sticker macaron" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 45 Q 50 25, 80 45 L 80 50 Q 50 55, 20 50 Z" fill="#FFB3D1" />
+    <path d="M22 52 Q 50 60, 78 52 L 78 55 Q 50 65, 22 55 Z" fill="#FF0055" />
+    <path d="M20 58 Q 50 50, 80 58 L 80 65 Q 50 85, 20 65 Z" fill="#FFB3D1" />
+  </svg>
+
+  <!-- Viewer Interface (Sweet Box and Order Receipt) -->
+  <div id="scene">
+    <!-- Interactive Sweet Box -->
+    <div id="sweet-box-wrap" class="box-closed">
+      <div id="sweet-box">
+        <div class="box-lid">
+          <div class="lid-top">
+            <span class="brand-logo font-display">Patisserie</span>
+            <span class="ribbon-knot">🎀</span>
+          </div>
+          <div class="lid-side side-t"></div>
+          <div class="lid-side side-b"></div>
+          <div class="lid-side side-l"></div>
+          <div class="lid-side side-r"></div>
+        </div>
+        <div class="box-base">
+          <div class="box-inside-shadow"></div>
+          <!-- Inside content (photo strip and message card) -->
+          <div class="receipt-card shadow-2xl" id="receipt-card">
+            <!-- Receipt Header -->
+            <div class="receipt-header text-center">
+              <h2 class="font-display text-2xl text-[var(--vibrant-pink)]">Sweet Order</h2>
+              <div class="dots-divider my-2"></div>
+              <p class="font-bold text-xs tracking-widest text-[#FF6699] uppercase mb-1">Receipt Ticket</p>
+              <p class="text-[0.7rem] opacity-60 font-mono" id="order-timestamp">DATE: 06/06/2026</p>
+            </div>
+
+            <!-- Receipt Divider -->
+            <div class="receipt-zigzag my-3"></div>
+
+            <!-- Recipient name -->
+            <div class="receipt-field mb-3">
+              <span class="font-bold text-[0.72rem] tracking-wider text-[var(--dark-berry)] uppercase block">Order For:</span>
+              <span class="font-display text-lg text-[var(--vibrant-pink)]" id="recipient-name">Loading...</span>
+            </div>
+
+            <!-- Message Lines -->
+            <div class="receipt-field mb-4">
+              <span class="font-bold text-[0.72rem] tracking-wider text-[var(--dark-berry)] uppercase block mb-1">Delicate Message:</span>
+              <p class="text-sm font-medium leading-relaxed font-mono whitespace-pre-wrap" id="txt">
+                <span id="typed"></span><span id="caret"></span>
+              </p>
+            </div>
+
+            <!-- Photo Strip Showcase -->
+            <div class="receipt-field">
+              <span class="font-bold text-[0.72rem] tracking-wider text-[var(--dark-berry)] uppercase block mb-2">Sweet Memories:</span>
+              <div id="strip" class="grid grid-cols-3 gap-2">
+                <div class="slot shadow-sm"><img src="" alt="" style="display:none" /><span class="ph"></span></div>
+                <div class="slot shadow-sm"><img src="" alt="" style="display:none" /><span class="ph"></span></div>
+                <div class="slot shadow-sm"><img src="" alt="" style="display:none" /><span class="ph"></span></div>
+              </div>
+            </div>
+            
+            <div class="dots-divider mt-4 mb-2"></div>
+            <div class="text-center font-display text-[0.65rem] tracking-widest uppercase text-[#FF6699]">
+              Served with love ✦
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tap-hint" class="font-display text-sm">Tap box to open ✧</div>
+    </div>
+  </div>
+
+  <!-- Letter Builder Editor -->
+  <div id="editor-container" class="editor-hidden">
+    <div class="order-ticket w-full max-w-lg p-8 md:p-12 mb-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="font-display text-4xl md:text-5xl text-[var(--vibrant-pink)] mb-2">
+          Patisserie
+        </h1>
+        <p class="font-semibold text-sm tracking-widest uppercase text-[#FF6699]">Bespoke Order Request</p>
+      </div>
+
+      <form id="editor-form">
+        <!-- Recipient -->
+        <div class="form-group mb-6">
+          <label for="editor-title" class="block font-bold text-xs tracking-wider text-[var(--dark-berry)] uppercase mb-3 ml-2">Order For</label>
+          <input type="text" class="chic-input text-lg" id="editor-title" required placeholder="Enter recipient's name..." />
+        </div>
+
+        <!-- Message -->
+        <div class="form-group mb-6">
+          <label for="editor-message" class="block font-bold text-xs tracking-wider text-[var(--dark-berry)] uppercase mb-3 ml-2">Sweet Notes</label>
+          <textarea class="chic-input text-base" id="editor-message" rows="3" required placeholder="Write your delicate message here (Press Enter for new line)..."></textarea>
+        </div>
+
+        <!-- Photos / Ingredients -->
+        <div class="form-group mb-10">
+          <label class="block font-bold text-xs tracking-wider text-[var(--dark-berry)] uppercase mb-3 ml-2">Photo Memories</label>
+          
+          <div class="ingredient-board">
+            <!-- Slot 1 -->
+            <div class="photo-upload-box ingredient-slot">
+              <input type="file" id="photo-input-1" accept="image/*" required class="photo-file-input hidden" />
+              <label for="photo-input-1" class="upload-label flex flex-col items-center justify-center cursor-pointer w-full h-full" id="label-photo-1">
+                <span class="upload-icon text-2xl mb-1" id="icon1">✧</span>
+                <span class="upload-text ingredient-label">Select</span>
+              </label>
+              <button type="button" class="btn-remove-photo" id="btn-remove-1" style="display:none" aria-label="Remove photo">&times;</button>
+            </div>
+            <!-- Slot 2 -->
+            <div class="photo-upload-box ingredient-slot">
+              <input type="file" id="photo-input-2" accept="image/*" required class="photo-file-input hidden" />
+              <label for="photo-input-2" class="upload-label flex flex-col items-center justify-center cursor-pointer w-full h-full" id="label-photo-2">
+                <span class="upload-icon text-2xl mb-1" id="icon2">✧</span>
+                <span class="upload-text ingredient-label">Select</span>
+              </label>
+              <button type="button" class="btn-remove-photo" id="btn-remove-2" style="display:none" aria-label="Remove photo">&times;</button>
+            </div>
+            <!-- Slot 3 -->
+            <div class="photo-upload-box ingredient-slot">
+              <input type="file" id="photo-input-3" accept="image/*" required class="photo-file-input hidden" />
+              <label for="photo-input-3" class="upload-label flex flex-col items-center justify-center cursor-pointer w-full h-full" id="label-photo-3">
+                <span class="upload-icon text-2xl mb-1" id="icon3">✧</span>
+                <span class="upload-text ingredient-label">Select</span>
+              </label>
+              <button type="button" class="btn-remove-photo" id="btn-remove-3" style="display:none" aria-label="Remove photo">&times;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-4">
+          <button type="submit" class="bake-btn btn-seal">
+            Prepare Order ✦
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay">
+      <div class="receipt-modal">
+        <div class="text-5xl mb-4">🥂</div> 
+        <h2 class="font-display text-3xl text-[var(--vibrant-pink)] mb-2">Magnifique!</h2>
+        
+        <div class="soft-divider"></div>
+        
+        <p class="font-bold text-sm tracking-widest uppercase mb-3 text-[#FF6699]">Ready for Delivery</p>
+        <p class="text-sm mb-6 leading-relaxed text-[var(--dark-berry)] opacity-80">Your bespoke link has been copied to your clipboard. Share it with your special someone to serve.</p>
+        
+        <div class="link-copy-container flex gap-2 mb-8">
+          <input type="text" id="share-link-input" readonly class="flex-1 px-4 py-3 rounded-xl border border-[var(--blush-pink)] bg-[var(--frosting)] text-xs font-mono outline-none" />
+          <button type="button" id="btn-copy-link" class="px-4 py-3 bg-[var(--dark-berry)] text-white text-xs font-bold rounded-xl hover:opacity-95">Copy</button>
+        </div>
+
+        <button type="button" id="btn-close-modal" class="bake-btn !text-sm !py-3">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sealing Loader Overlay -->
+  <div id="seal-loader" class="loader-hidden">
+    <div class="seal-loader-content">
+      <div class="cupid-path-container">
+        <!-- We use the target-heart but style it as a cupcake target -->
+        <span class="target-heart" id="seal-target-heart">🧁</span>
+        <div class="progress-track">
+          <div class="progress-fill" id="seal-progress-fill"></div>
+          <!-- We use the cupid-arrow but style it as a flying cherry! -->
+          <span class="cupid-arrow" id="seal-cupid-arrow">🍒</span>
+        </div>
+      </div>
+      <div class="progress-percentage font-display" id="seal-progress-percentage">0%</div>
+      <div class="progress-status-text font-display" id="seal-progress-status">Whisking ingredients... 🕯️</div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+
+</html>
